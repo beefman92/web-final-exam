@@ -10,8 +10,10 @@
   "dependencies": {
     "@babel/runtime": "^7.3.4",
     "meteor-node-stubs": "^0.4.1",
+    "node-wikipedia": "0.0.2",
     "react": "^16.5.0",
-    "react-dom": "^16.5.0"
+    "react-dom": "^16.5.0",
+    "semantic-ui-react": "^0.86.0"
   },
   "meteor": {
     "mainModule": {
