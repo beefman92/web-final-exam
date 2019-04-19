@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Meteor } from "meteor/meteor";
 import { Container, Grid, Form, Button } from "semantic-ui-react";
+import StatisticsBoard from "./StatisticsBoard";
 import "../css/app.css";
 
 const BOUNDARY_STEP = 20;
@@ -13,6 +14,7 @@ class App extends Component {
 			response: null,
 			history: [],
 			boundary: BOUNDARY_STEP,
+			updateBoard: false,
 		};
 	}
 
@@ -20,18 +22,20 @@ class App extends Component {
 		e.preventDefault();
 		this.setState({
 			[e.target.name]: e.target.value,
+			updateBoard: false,
 		});
 	}
 
 	handleSearch(e) {
 		e.preventDefault();
 		Meteor.call("wiki.search", this.state.searchContent, (error, result) => {
-			const newHistory = this.state.history.slice();
+			const newHistory = [];
 			newHistory.push(this.state.searchContent);
 			this.setState({
 				searchContent: "",
 				response: result,
 				history: newHistory,
+				updateBoard: true,
 				boundary: BOUNDARY_STEP,
 			});
 		});
@@ -53,6 +57,7 @@ class App extends Component {
 				searchContent: "",
 				response: result,
 				history: newHistory,
+				updateBoard: true,
 				boundary: BOUNDARY_STEP,
 			});
 		});
@@ -87,7 +92,7 @@ class App extends Component {
 					} else if (index === this.state.boundary) {
 						if (this.state.boundary > BOUNDARY_STEP) {
 							return (
-								<span>
+								<span key={"button-wrapper"}>
 									<Button size={"mini"} key={"need-more-button"} positive onClick={() => this.handleShowMore()}>I need more...</Button>
 									<Button size={"mini"} key={"need-less-button"} negative onClick={() => this.handleShowLess()}>I need less...</Button>
 								</span>);
@@ -111,6 +116,7 @@ class App extends Component {
 				searchContent: "",
 				response: result,
 				history: newHistory,
+				updateBoard: true,
 				boundary: BOUNDARY_STEP,
 			});
 		});
@@ -126,56 +132,59 @@ class App extends Component {
 
 	render() {
 		return (
-			<Container>
-				<Grid divided>
-					<Grid.Row>
-						<Grid.Column textAlign={"center"} width={"16"}>
-							<h1>Wiki Search Engine</h1>
-						</Grid.Column>
-					</Grid.Row>
-					<Grid.Row>
-						<Grid.Column width={"16"}>
-							<h2>What do you want to know</h2>
-							<Form>
-								<Form.Field>
-									<label>What do you want to know?</label>
-									<input
-										placeholder="Please, search something"
-										name={"searchContent"}
-										value={this.state.searchContent}
-										onChange={(e) => this.handleInputOnChange(e)}
-									/>
-								</Form.Field>
-								<Button positive onClick={(e) => this.handleSearch(e)}>Search</Button>
-							</Form>
-						</Grid.Column>
-					</Grid.Row>
-					<Grid.Row>
-						<Grid.Column width={"16"}>
-							<h2>History</h2>
-						</Grid.Column>
-						<Grid.Column id={"historyBoard"} width={"16"}>
-							{this.renderHistory()}
-						</Grid.Column>
-					</Grid.Row>
-					<Grid.Row>
-						<Grid.Column width={"16"}>
-							<h2>Links</h2>
-						</Grid.Column>
-						<Grid.Column id={"linkBoard"} width={"16"}>
-							{this.renderLinks()}
-						</Grid.Column>
-					</Grid.Row>
-					<Grid.Row>
-						<Grid.Column width={"16"}>
-							<h2>Content</h2>
-						</Grid.Column>
-						<Grid.Column id={"contentBoard"} width={"16"}>
-							{this.renderContent()}
-						</Grid.Column>
-					</Grid.Row>
-				</Grid>
-			</Container>
+			<div>
+				<Container>
+					<Grid divided>
+						<Grid.Row>
+							<Grid.Column textAlign={"center"} width={"16"}>
+								<h1>Wiki Search Engine</h1>
+							</Grid.Column>
+						</Grid.Row>
+						<Grid.Row>
+							<Grid.Column width={"16"}>
+								<h2>What do you want to know</h2>
+								<Form>
+									<Form.Field>
+										<label>What do you want to know?</label>
+										<input
+											placeholder="Please, search something"
+											name={"searchContent"}
+											value={this.state.searchContent}
+											onChange={(e) => this.handleInputOnChange(e)}
+										/>
+									</Form.Field>
+									<Button positive onClick={(e) => this.handleSearch(e)}>Search</Button>
+								</Form>
+							</Grid.Column>
+						</Grid.Row>
+						<Grid.Row>
+							<Grid.Column width={"16"}>
+								<h2>History</h2>
+							</Grid.Column>
+							<Grid.Column id={"historyBoard"} width={"16"}>
+								{this.renderHistory()}
+							</Grid.Column>
+						</Grid.Row>
+						<Grid.Row>
+							<Grid.Column width={"16"}>
+								<h2>Links</h2>
+							</Grid.Column>
+							<Grid.Column id={"linkBoard"} width={"16"}>
+								{this.renderLinks()}
+							</Grid.Column>
+						</Grid.Row>
+						<Grid.Row>
+							<Grid.Column width={"16"}>
+								<h2>Content</h2>
+							</Grid.Column>
+							<Grid.Column id={"contentBoard"} width={"16"}>
+								{this.renderContent()}
+							</Grid.Column>
+						</Grid.Row>
+					</Grid>
+				</Container>
+				<StatisticsBoard history={this.state.history} update={this.state.updateBoard}/>
+			</div>
 		);
 	}
 }

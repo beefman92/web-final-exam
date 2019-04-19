@@ -7,3 +7,50 @@
     height: 60px;
     overflow: auto;
 }
+
+#boardItem {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    background-color: dodgerblue;
+    right: 0;
+    bottom: 200px;
+    border-radius: 5px 0px 0px 5px;
+    transition: right 1s;
+    z-index: 999;
+    cursor: pointer;
+}
+
+#boardItemIcon {
+    cursor: pointer;
+}
+
+#board {
+    position: fixed;
+    transition: right 1s;
+    padding: 5px;
+    right: -300px;
+    bottom: 0;
+    height: 600px;
+    width: 250px;
+    border-radius: 5px 0px 0px 5px;
+    border-width: 2px;
+    border-color: dodgerblue;
+    border-style: solid;
+    z-index: 999;
+    background-color: whitesmoke;
+}
+
+.board-item-wrapper {
+    display: flex;
+}
+
+.board-left-item {
+    flex: 80%;
+    padding: 3px;
+}
+
+.board-right-item {
+    flex: 20%;
+    padding: 3px;
+}
