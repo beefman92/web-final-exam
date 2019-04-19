@@ -3,6 +3,8 @@ import { Meteor } from "meteor/meteor";
 import { Container, Grid, Form, Button } from "semantic-ui-react";
 import "../css/app.css";
 
+const BOUNDARY_STEP = 20;
+
 class App extends Component {
 	constructor(props) {
 		super(props);
@@ -10,6 +12,7 @@ class App extends Component {
 			searchContent: "",
 			response: null,
 			history: [],
+			boundary: BOUNDARY_STEP,
 		};
 	}
 
@@ -29,6 +32,7 @@ class App extends Component {
 				searchContent: "",
 				response: result,
 				history: newHistory,
+				boundary: BOUNDARY_STEP,
 			});
 		});
 	}
@@ -49,19 +53,50 @@ class App extends Component {
 				searchContent: "",
 				response: result,
 				history: newHistory,
+				boundary: BOUNDARY_STEP,
 			});
 		});
+	}
+
+	handleShowMore() {
+		const newBoundary = this.state.boundary + BOUNDARY_STEP;
+		this.setState({
+			boundary: newBoundary,
+		});
+	}
+
+	handleShowLess() {
+		const newBoundary = this.state.boundary - BOUNDARY_STEP;
+		if (newBoundary > 0) {
+			this.setState({
+				boundary: newBoundary,
+			});
+		}
 	}
 
 	renderLinks() {
 		if (this.state.response !== undefined && this.state.response !== null) {
 			return (
 				this.state.response.links.map((value, index) => {
-					return (
-						<Button size={"mini"} key={index} onClick={() => this.handleClick(value["*"])}>
-							{value["*"]}
-						</Button>
-					);
+					if (index < this.state.boundary) {
+						return (
+							<Button size={"mini"} key={index} onClick={() => this.handleClick(value["*"])}>
+								{value["*"]}
+							</Button>
+						);
+					} else if (index === this.state.boundary) {
+						if (this.state.boundary > BOUNDARY_STEP) {
+							return (
+								<span>
+									<Button size={"mini"} key={"need-more-button"} positive onClick={() => this.handleShowMore()}>I need more...</Button>
+									<Button size={"mini"} key={"need-less-button"} negative onClick={() => this.handleShowLess()}>I need less...</Button>
+								</span>);
+						} else {
+							return <Button size={"mini"} key={"need-more-button"} positive onClick={() => this.handleShowMore()}>I need more...</Button>;
+						}
+					} else {
+						return "";
+					}
 				})
 			);
 		} else {
@@ -76,6 +111,7 @@ class App extends Component {
 				searchContent: "",
 				response: result,
 				history: newHistory,
+				boundary: BOUNDARY_STEP,
 			});
 		});
 	}
