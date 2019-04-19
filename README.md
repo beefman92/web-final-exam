@@ -3,11 +3,13 @@
 You can search in this website. The website can display your search result and relative links. 
 It also records your search history in browser so that you can go back any time you want.
 In the part of links, you can choose to display more links or less links by click the button.
+There is a small board on the right of website. After clicking it, it can show you some statistics.
 
 This project is made by [Yibo Zhao](http://18.144.2.153:8080/).
 
 ## Demo
 Run this project on your machine.
+![](./frontpage.png)
 
 ## How to run
 ```
@@ -18,8 +20,10 @@ meteor // Then the project is running and go to localhost:3000 to see the websit
 ```
 
 ## Feature
-Search keyword.
-Go back in history.
++ Search keyword.
++ Go back in history.
++ Show more links or less links
++ Get statistics about how many people have searched topics you are viewing now.
 
 ## Technology
 During the development, we utilized following technologies
