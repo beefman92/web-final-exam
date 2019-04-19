@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Meteor } from "meteor/meteor";
 import { Container, Grid, Form, Button } from "semantic-ui-react";
+import "../css/app.css";
 
 class App extends Component {
 	constructor(props) {
@@ -8,6 +9,7 @@ class App extends Component {
 		this.state = {
 			searchContent: "",
 			response: null,
+			history: [],
 		};
 	}
 
@@ -21,19 +23,69 @@ class App extends Component {
 	handleSearch(e) {
 		e.preventDefault();
 		Meteor.call("wiki.search", this.state.searchContent, (error, result) => {
+			const newHistory = this.state.history.slice();
+			newHistory.push(this.state.searchContent);
 			this.setState({
 				searchContent: "",
 				response: result,
+				history: newHistory,
 			});
 		});
 	}
 
 	renderContent() {
-		if (this.state.response !== null) {
+		if (this.state.response !== undefined && this.state.response !== null) {
 			return <span dangerouslySetInnerHTML={{__html: this.state.response.text["*"]}}></span>;
 		} else {
 			return "";
 		}
+	}
+
+	handleClick(title) {
+		Meteor.call("wiki.search", title, (error, result) => {
+			const newHistory = this.state.history.slice();
+			newHistory.push(title);
+			this.setState({
+				searchContent: "",
+				response: result,
+				history: newHistory,
+			});
+		});
+	}
+
+	renderLinks() {
+		if (this.state.response !== undefined && this.state.response !== null) {
+			return (
+				this.state.response.links.map((value, index) => {
+					return (
+						<Button size={"mini"} key={index} onClick={() => this.handleClick(value["*"])}>
+							{value["*"]}
+						</Button>
+					);
+				})
+			);
+		} else {
+			return "";
+		}
+	}
+
+	handleClickHistory(value, index) {
+		Meteor.call("wiki.search", value, (error, result) => {
+			const newHistory = this.state.history.slice(0, index + 1);
+			this.setState({
+				searchContent: "",
+				response: result,
+				history: newHistory,
+			});
+		});
+	}
+
+	renderHistory() {
+		return this.state.history.map((value, index) => {
+			return (
+				<Button size={"mini"} key={index} onClick={() => this.handleClickHistory(value, index)}>{value}</Button>
+			);
+		});
 	}
 
 	render() {
@@ -64,17 +116,25 @@ class App extends Component {
 					</Grid.Row>
 					<Grid.Row>
 						<Grid.Column width={"16"}>
+							<h2>History</h2>
+						</Grid.Column>
+						<Grid.Column id={"historyBoard"} width={"16"}>
+							{this.renderHistory()}
+						</Grid.Column>
+					</Grid.Row>
+					<Grid.Row>
+						<Grid.Column width={"16"}>
 							<h2>Links</h2>
 						</Grid.Column>
-						{/*{this.state.displayContent !== null ? this.state.displayContent.links[0]["*"] : ""}*/}
+						<Grid.Column id={"linkBoard"} width={"16"}>
+							{this.renderLinks()}
+						</Grid.Column>
 					</Grid.Row>
 					<Grid.Row>
 						<Grid.Column width={"16"}>
 							<h2>Content</h2>
 						</Grid.Column>
-					</Grid.Row>
-					<Grid.Row>
-						<Grid.Column id={"contentDisplayBoard"} width={"16"}>
+						<Grid.Column id={"contentBoard"} width={"16"}>
 							{this.renderContent()}
 						</Grid.Column>
 					</Grid.Row>

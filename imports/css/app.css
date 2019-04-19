@@ -1,0 +1,9 @@
+#linkBoard {
+    height: 200px;
+    overflow: auto;
+}
+
+#historyBoard {
+    height: 60px;
+    overflow: auto;
+}
